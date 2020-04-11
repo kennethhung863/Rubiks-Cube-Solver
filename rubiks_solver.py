@@ -992,7 +992,7 @@ def solve_second_layer(solve_stage):
             up()
 
         # if there is misplaced on right, from left side
-        if not(char_cube[1][1][2] == 'y') and not(char_cube[2][1][0] == 'y') and not(char_cube[1][1][2] == char_cube[1][1][1]) and not(char_cube[2][1][0] == char_cube[2][1][1]) and (char_cube[1][0][1] == 'y' or char_cube[5][2][1] == 'y'):
+        if not(char_cube[1][1][2] == 'y') and not(char_cube[2][1][0] == 'y') and (not(char_cube[1][1][2] == char_cube[1][1][1]) or not(char_cube[2][1][0] == char_cube[2][1][1])) and (char_cube[1][0][1] == 'y' or char_cube[5][2][1] == 'y'):
             front()                
             right_prime()
             front_prime()
