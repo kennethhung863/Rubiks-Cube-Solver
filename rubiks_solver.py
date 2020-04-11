@@ -1,4 +1,4 @@
-#   
+#   hello
 # Author: Kenneth Hung
 # This is the file that runs the solver, and displays the cube graphically using PyGame
 # Currently under testing and refining, but still functional
