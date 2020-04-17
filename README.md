@@ -77,4 +77,4 @@ Test Button (FOR DEVELOPMENT)
  
  ### Notes
   - If the program terminates while solving and you inputted colors for the solve, the colors on the cube aren't inputted correctly. Misaligned sides, even if there is enough colors on the cube, are unsolvable. Try to input the colors again.
-  - The program will show all turns from the initial stage to solved stage, but it will most likely not be optimal. The approach is not meant to be a speed solving one, and is for use with a Raspberry Pi to solve a real cube using servos for a personal project in development.
+  - The program will show all turns from the initial stage to solved stage, but it will most likely not be optimal. The approach is not meant to be a speedy one and is for a Raspberry Pi to solve a real cube using servos for a personal project in development.
