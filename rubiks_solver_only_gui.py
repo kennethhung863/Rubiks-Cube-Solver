@@ -13,17 +13,11 @@ import math
 from rectangle import rectangle
 from square import square
 from button import button
-import servo
-import rubiks_solver
+# import rubiks_solver
 import random
 
 import time
-import serial
 
-# for i in range(5):
-#     servo.rotate_one()
-#     servo.rotate_two()
-#     servo.rotate_three()
 # colors
 white = ((255,255,255))
 blue = ((0,0,255))
@@ -127,7 +121,6 @@ def print_cube(cube):
 # cube movements
 def up():
     print('U')
-    servo.up()
     #making new list to copy
     temp_left = []
     for i in range(0,3):
@@ -167,7 +160,6 @@ def up():
 
 def up_prime():
     print('U\'')
-    servo.up_prime()
 
     #making new list to copy
     temp_left = []
@@ -210,7 +202,6 @@ def up_prime():
 
 def down():
     print('D')
-    servo.down()
 
     #making new list to copy
     temp_left = []
@@ -253,7 +244,6 @@ def down():
 
 def down_prime():
     print('D\'')
-    servo.down_prime()
 
     #making new list to copy
     temp_left = []
@@ -296,7 +286,6 @@ def down_prime():
 
 def left():
     print('L')
-    servo.left()
 
     #making new list to copy
     temp_left = []
@@ -340,7 +329,6 @@ def left():
 
 def left_prime():
     print('L\'')
-    servo.left_prime()
 
     #making new list to copy
     temp_left = []
@@ -384,7 +372,6 @@ def left_prime():
 
 def right():
     print('R')
-    servo.right()
 
     #making new list to copy
     temp_left = []
@@ -428,7 +415,6 @@ def right():
 
 def right_prime():
     print('R\'')
-    servo.right_prime()
 
     #making new list to copy
     temp_left = []
@@ -472,7 +458,6 @@ def right_prime():
 
 def front():
     print('F')
-    servo.front()
 
     #making new list to copy
     temp_left = []
@@ -516,7 +501,6 @@ def front():
 
 def front_prime():
     print('F\'')
-    servo.front_prime()
 
     #making new list to copy
     temp_left = []
@@ -560,7 +544,6 @@ def front_prime():
 
 def back():
     print('B')
-    servo.back()
 
     #making new list to copy
     temp_left = []
@@ -604,7 +587,6 @@ def back():
 
 def back_prime():
     print('B\'')
-    servo.back_prime()
 
     #making new list to copy
     temp_left = []
@@ -648,7 +630,6 @@ def back_prime():
 
 def rotate_cw():
     print('Rotate CW')
-    servo.rotate_cw()
     #making new list to copy
     temp_left = []
     for i in range(0,3):

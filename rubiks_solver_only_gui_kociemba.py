@@ -13,17 +13,16 @@ import math
 from rectangle import rectangle
 from square import square
 from button import button
-import servo
-import rubiks_solver
+from rubik_solver import utils
+
 import random
 
 import time
-import serial
 
-# for i in range(5):
-#     servo.rotate_one()
-#     servo.rotate_two()
-#     servo.rotate_three()
+
+
+
+
 # colors
 white = ((255,255,255))
 blue = ((0,0,255))
@@ -127,7 +126,6 @@ def print_cube(cube):
 # cube movements
 def up():
     print('U')
-    servo.up()
     #making new list to copy
     temp_left = []
     for i in range(0,3):
@@ -167,7 +165,6 @@ def up():
 
 def up_prime():
     print('U\'')
-    servo.up_prime()
 
     #making new list to copy
     temp_left = []
@@ -210,7 +207,6 @@ def up_prime():
 
 def down():
     print('D')
-    servo.down()
 
     #making new list to copy
     temp_left = []
@@ -253,7 +249,6 @@ def down():
 
 def down_prime():
     print('D\'')
-    servo.down_prime()
 
     #making new list to copy
     temp_left = []
@@ -296,7 +291,6 @@ def down_prime():
 
 def left():
     print('L')
-    servo.left()
 
     #making new list to copy
     temp_left = []
@@ -340,7 +334,6 @@ def left():
 
 def left_prime():
     print('L\'')
-    servo.left_prime()
 
     #making new list to copy
     temp_left = []
@@ -384,7 +377,6 @@ def left_prime():
 
 def right():
     print('R')
-    servo.right()
 
     #making new list to copy
     temp_left = []
@@ -428,7 +420,6 @@ def right():
 
 def right_prime():
     print('R\'')
-    servo.right_prime()
 
     #making new list to copy
     temp_left = []
@@ -472,7 +463,6 @@ def right_prime():
 
 def front():
     print('F')
-    servo.front()
 
     #making new list to copy
     temp_left = []
@@ -516,7 +506,6 @@ def front():
 
 def front_prime():
     print('F\'')
-    servo.front_prime()
 
     #making new list to copy
     temp_left = []
@@ -560,7 +549,6 @@ def front_prime():
 
 def back():
     print('B')
-    servo.back()
 
     #making new list to copy
     temp_left = []
@@ -604,7 +592,6 @@ def back():
 
 def back_prime():
     print('B\'')
-    servo.back_prime()
 
     #making new list to copy
     temp_left = []
@@ -646,50 +633,6 @@ def back_prime():
         char_cube[4][2][i] = temp_right[2-i][2]  
     update_cube()
 
-def rotate_cw():
-    print('Rotate CW')
-    servo.rotate_cw()
-    #making new list to copy
-    temp_left = []
-    for i in range(0,3):
-        temp_left.append(char_cube[0][i][:])
-    temp_front = []
-    for i in range(0,3):
-        temp_front.append(char_cube[1][i][:])
-    temp_right = []
-    for i in range(0,3):
-        temp_right.append(char_cube[2][i][:])
-    temp_back = []
-    for i in range(0,3):
-        temp_back.append(char_cube[3][i][:])
-    temp_down = []
-    for i in range(0,3):
-        temp_down.append(char_cube[4][i][:])  
-    temp_up = []
-    for i in range(0,3):
-        temp_up.append(char_cube[5][i][:])
-
-    # rotate up
-    for i in range(0,3):
-        for j in range(0,3):
-            char_cube[5][i][j] = temp_up[2-j][i]
-
-    # rotate down
-    for i in range(0,3):
-        for j in range(0,3):
-            char_cube[4][i][j] = temp_down[j][2-i]
-
-    for i in range(0,3):
-        for j in range(0,3):
-            char_cube[0][i][j] = temp_front[i][j]
-            char_cube[1][i][j] = temp_right[i][j]
-            char_cube[2][i][j] = temp_back[i][j]
-            char_cube[3][i][j] = temp_left[i][j]
-    update_cube()
-def rotate_ccw():
-    print("Rotate CCW (3x Rotate CW)")
-    for i in range(0,3):
-        rotate_cw()
 # graphics update functions
 def update_cube():
     #time.sleep(0.1)
@@ -714,7 +657,6 @@ def draw():
     # buttons
     if not(solving):
         start_button.draw()
-        rotate_cw_button.draw()
         scramble_button.draw()
         test_button.draw()
         up_button.draw()
@@ -776,548 +718,78 @@ def test():
 # solving algorithm
 def solve():
     print("solving...")
-    # initially assume unsolved
-    solve_stage = 1
-    # run until it is solved
-    # change this later to max states+1
-    solve_stage_counter = 0
-    infinite = False
-    while solve_stage != 9:
-        prev_solve_stage = solve_stage
+    cube_string = ""
+    
+    # convert cube to string
+    for row in range(3):
+        for col in range(3):
+            cube_string += char_cube[5][row][col]
+    for side in range(4):
+        for row in range(3):
+            for col in range(3):
+                cube_string += char_cube[side][row][col]
+    for row in range(3):
+        for col in range(3):
+            cube_string += char_cube[4][row][col]
 
-        solve_stage = run_solve_stage(solve_stage)
-        print_cube(char_cube)
+    # solve cube
+    if (not(is_cube_solved())):
+        solve_steps = utils.solve(cube_string, 'Kociemba')
+    else:
+        solve_steps = []
 
-        if prev_solve_stage == solve_stage:
-            solve_stage_counter += 1
-        else:
-            solve_stage_counter = 0
 
-        if solve_stage_counter > 40:
-            print("infinite loop at stage ",solve_stage)
-            infinite = True
-
-        assert(not(infinite))
-
-    assert(is_cube_solved())
-
+    execute_steps(solve_steps)
+    print(solve_steps)
+    print(cube_string)
     print('finished solving')
     
 
-def run_solve_stage(solve_stage):
-    # different stages of the solving process: next stage is updated every time a solve algorithm runs
-    # change this to add the rest of the states
-    if solve_stage == 1:
-        solve_stage = solve_cross_unordered(solve_stage)
-    elif solve_stage == 2:        
-        solve_stage = solve_cross_complete(solve_stage)
-    elif solve_stage == 3:
-        solve_stage = solve_second_layer(solve_stage)
-    elif solve_stage == 4:
-        solve_stage = solve_white_corners(solve_stage)
-    elif solve_stage == 5:
-        solve_stage = solve_yellow_cross(solve_stage)
-    elif solve_stage == 6:
-        solve_stage = solve_yellow_side(solve_stage)
-    elif solve_stage == 7:
-        solve_stage = solve_last_layer(solve_stage)
-    elif solve_stage == 8:
-        solve_stage = solve_last_layer_middle(solve_stage)
-    return solve_stage
-
-
-def solve_cross_unordered(solve_stage):
-    print('stage 1: cross unordered')
-    # are the side pieces in place
-    if  char_cube[4][0][1] == 'w' and char_cube[4][1][0] == 'w' and char_cube[4][1][2] == 'w' and char_cube[4][2][1] == 'w':
-        print('stage 1 solved')
-        solve_stage = 2
-        return solve_stage
-
-
-    elif solve_stage == 1:
-        print('solving stage 1')
-        # check top of cube
-        for s in range(0,4):
-            if (char_cube[5][2][1] == 'w' and not(char_cube[4][0][1] == 'w')):
-                print('found a piece on top, rotating F2 to place')
-                front()
-                front()
-            elif (char_cube[5][2][1] == 'w' and (char_cube[4][0][1] == 'w')):
-                print('found a piece on top, but it is being blocked')
-                while char_cube[4][0][1] == 'w':
-                    down()
-                    print('rotating to unblock')
-                print('placing piece on top')
-                front()
-                front()
-            print('next piece')
-            rotate_cw()
-        
-            # check for left, front, right and back
-        for s in range(0,4):
-            # top side
-            if char_cube[1][0][1] == 'w' and not(char_cube[4][0][1] == 'w'):
-                front()
-            elif char_cube[1][0][1] == 'w' and (char_cube[4][0][1] == 'w'):
-                while char_cube[4][0][1] == 'w':
-                    down()
-                front()
-            
-            # bottom side
-            if char_cube[1][2][1] == 'w' and not(char_cube[4][0][1] == 'w'):
-                front()
-
-            rotate_cw()
-
-
-        # check for left, front, right and back on left and right side
-        for s in range(0,4):
-            # left side
-            if char_cube[1][1][0] == 'w' and not(char_cube[4][1][0] == 'w'):
-                left()
-            elif char_cube[1][1][0] == 'w' and (char_cube[4][1][0] == 'w'):
-                while char_cube[4][1][0] == 'w':
-                    down()
-                left()
-            
-            # right side
-            if char_cube[1][1][2] == 'w' and not(char_cube[4][1][2] == 'w'):
-                right()
-            elif char_cube[1][1][2] == 'w' and (char_cube[4][1][2] == 'w'):
-                while char_cube[4][1][2] == 'w':
-                    down()
-                right()
-            rotate_cw()
-        return solve_stage
-
-    else:
-        print("error at stage 1")
-        return None
-
-def solve_cross_complete(solve_stage):
-    print('stage 2: cross complete')
-
-    if char_cube[0][2][1] == char_cube[0][1][1] and char_cube[1][2][1] == char_cube[1][1][1] and char_cube[2][2][1] == char_cube[2][1][1] and char_cube[3][2][1] == char_cube[3][1][1]:
-        print('stage 2 solved')
-        solve_stage = 3
-        return solve_stage   
-    # make flower pattern
-    elif solve_stage == 2:
-        front()
-        front()
-        left()
-        left()
-        back()
-        back()
-        right()
-        right()
-
-
-        for s in range(0,4):
-            while not(char_cube[1][0][1] == char_cube[1][1][1]):
-                up_prime()
-                rotate_cw()
-            front()
-            front()
-            rotate_cw()
-        solve_stage = 3
-        return solve_stage
-
-    else:
-        print("error at stage 2")
-        return None    
-
-def solve_second_layer(solve_stage):
-    print('stage 3: solve second layer')
-
-    second_layer_solved = True
-    # check if it is solved
-    for s in range(0,4):
-        for i in range(0,3):
-            if not(char_cube[s][1][i] == char_cube[s][1][1]):
-                second_layer_solved = False
-    if second_layer_solved == True:
-        solve_stage = 4
-        return solve_stage
-
-    #rotate algorithm to place
-
-    for s in range(0,4):
-        #if there is a side piece on the top, orient it so then it matches center then place
-        for t in range(0,4):
-            if char_cube[1][0][1] == char_cube[1][1][1]:
-                # put up to left
-                if char_cube[5][2][1] == char_cube[0][1][1]:
-                    front_prime()
-                    left()
-                    front()
-                    left_prime()
-                    break
-                # put up to right
-                if char_cube[5][2][1] == char_cube[2][1][1]:
-                    front()
-                    right_prime()
-                    front_prime()
-                    right()
-                    break
+def execute_steps(solve_steps):
+    for step in range(len(solve_steps)):
+        turn = solve_steps[step]
+        if turn == 'U':
             up()
-
-        # if there is misplaced on right, from left side
-        if not(char_cube[1][1][2] == 'y') and not(char_cube[2][1][0] == 'y') and (not(char_cube[1][1][2] == char_cube[1][1][1]) or not(char_cube[2][1][0] == char_cube[2][1][1])) and (char_cube[1][0][1] == 'y' or char_cube[5][2][1] == 'y'):
-            front()                
-            right_prime()
-            front_prime()
-            right()
-
-        rotate_cw()
-    # solve_stage = 4
-    return solve_stage
-
-
-    # if cube[0]
-    # for s in range(0,4):
-    #     if cube
-
-def solve_white_corners(solve_stage):
-    print('stage 4: solve white corners')
-    bottom_layer_solved = True
-    # check if bottom side is solved
-    for s in range(0,4):
-        for i in range(0,3):
-            if not(char_cube[s][2][i] == char_cube[s][2][1]):
-                bottom_layer_solved = False
-                break
-    # check if bottom white side is solved
-    for i in range(0,3):
-        for j in range(0,3):
-            if not(char_cube[4][i][j] == 'w'):
-                bottom_layer_solved = False
-
-    if bottom_layer_solved == True:
-        solve_stage = 5
-        return solve_stage
-
-    # corner placement algorithm
-
-    # right side is white
-    for s in range(0,4):
-        for i in range(0,4):
-            # right side is white
-            if char_cube[2][0][0] == 'w':
-                # if correct corner
-                if char_cube[1][0][2] == char_cube[1][1][1] and char_cube[5][2][2] == char_cube[2][1][1]:
-                    up()
-                    front_prime()
-                    up()
-                    front()
-                    up()
-                    up()
-                    front_prime()
-                    up()
-                    front()
-                    break
-            #front side is white
-            if char_cube[1][0][2] == 'w':
-                if char_cube[5][2][2] == char_cube[1][1][1] and char_cube[2][0][0] == char_cube[2][1][1]:
-                    up_prime()
-                    right()
-                    up_prime()
-                    right_prime()
-                    up()
-                    up()
-                    right()
-                    up_prime()
-                    right_prime()
-                    break
-            # up side is white
-            if char_cube[5][2][2] == 'w':
-                if char_cube[2][0][0] == char_cube[1][1][1] and char_cube[1][0][2] == char_cube[2][1][1]:
-                    for loop in range(0,3):
-                        right()
-                        up()
-                        right_prime()
-                        up_prime()
-                    break
+        elif turn == 'U2':
+            up()
+            up()
+        elif turn == 'U\'':
             up_prime()
-        rotate_cw()
-        # check if white corner on bottom
-    for s in range(0,4):
-        if (char_cube[4][0][2] == 'w' and not(char_cube[1][2][2] == char_cube[1][1][1]) and not(char_cube[2][2][0] == char_cube[2][1][1])) or char_cube[1][2][2] == 'w' or char_cube[2][2][0] =='w':
-            for loop in range(0,3):
-                right()
-                up()
-                right_prime()
-                up_prime()
-        rotate_cw()
-        
-     
-    return solve_stage
-
-def solve_yellow_cross(solve_stage):
-    print('stage 5: solve yellow cross')
-    yellow_cross = True
-
-    if not(char_cube[5][0][1] == 'y' and char_cube[5][1][0] == 'y' and char_cube[5][1][2] == 'y' and char_cube[5][2][1] == 'y'):
-        yellow_cross = False
-
-    if yellow_cross == True:
-        solve_stage = 6
-        return solve_stage
-
-
-    for s in range(0,4):
-        # button
-        # button = True
-        # for i in range(0,3):
-        #     if char_cube[5][0][i] == 'y' or char_cube[5][2][i] == 'y':
-        #         button = False
-        # if char_cube[5][1][0] == 'y' or char_cube[5][1][2] == 'y':
-        #     button = False
-        
-
-        
-        # if hook, do algorithm once after loop
-        if char_cube[5][1][0] == 'y' and char_cube[5][0][1] == 'y':
-            break
-        # if bar, do it once now, then again after loop
-        if char_cube[5][1][0] == 'y' and char_cube[5][1][2] == 'y':
-            front()
-            up()
+        elif turn == 'D':
+            down()
+        elif turn == 'D2':
+            down()
+            down()
+        elif turn == 'D\'':
+            down_prime()
+        elif turn == 'L':
+            left()
+        elif turn == 'L2':
+            left()
+            left()
+        elif turn == 'L\'':
+            left_prime()
+        elif turn == 'R':
             right()
-            up_prime()
+        elif turn == 'R2':
+            right()
+            right()
+        elif turn == 'R\'':
             right_prime()
+        elif turn == 'F':
+            front()
+        elif turn == 'F2':
+            front()
+            front()
+        elif turn == 'F\'':
             front_prime()
-            break
-        
-        #otherwise, keep rotating until we find pattern above
-        up()
-
-    # runs if hook is found, if bar is found. if nothing found, run algorithm to get hook or bar next time
-    front()
-    up()
-    right()
-    up_prime()
-    right_prime()
-    front_prime()
-
-    return solve_stage
-
-def solve_yellow_side(solve_stage):
-    print('stage 6: solve yellow side')
-
-    yellow_side_solved = True
-    for i in range(0,3):
-        for j in range(0,3):
-            if not(char_cube[5][i][j] == 'y'):
-                yellow_side_solved = False
-                break
-
-    if yellow_side_solved:
-        solve_stage = 7
-        return solve_stage 
-
-    # fish, cross, t, tl/br corner
-    for s in range(0,4):
-
-        # double fish
-        double_fish = True
-        for i in range(0,2):
-            for j in range(0,2):
-                if not(char_cube[5][i][j] == 'y'):
-                    double_fish = False
-                    break
-                if not(char_cube[5][2-i][2-j] == 'y'):
-                    double_fish = False
-                    break
-        if not(char_cube[1][0][0] == char_cube[2][0][2]):
-            double_fish = False
-
-        if double_fish:
-            print('found a double fish')
-            break
-        
-        # didn't add notch, not needed?
-        # T shape
-        T = True
-        for i in range(0,2):
-            for j in range(0,3):
-                if not(char_cube[5][i][j] == 'y'):
-                    T = False
-                    break
-        if T and char_cube[1][0][0] == char_cube[1][0][2]:
-            print('found a T1')
-            break
-        
-        if T and char_cube[0][0][2] == char_cube[2][0][0]:
-            print('found a T2')
-            break
-
-        # inverse T - if we find an inverse T, do U2 to make it a T
-        T_inv = True
-        for i in range(0,2):
-            for j in range(0,3):
-                if not(char_cube[5][i+1][j] == 'y'):
-                    T_inv = False
-                    break
-        if T_inv and char_cube[3][0][0] == char_cube[3][0][2]:
-            print('found a T_inv1')
-            up()
-            up()
-            break
-        
-        if T_inv and char_cube[2][0][2] == char_cube[0][0][0]:
-            print('found a T_inv2')
-            up()
-            up()
-            break
-
-
-        # cross
-
-        if char_cube[5][0][1] == 'y' and char_cube[5][1][0] == 'y' and char_cube[5][1][2] == 'y' and char_cube[5][2][1] == 'y':
-            if char_cube[0][0][2] == 'y' and char_cube[2][0][0] == 'y' and char_cube[3][0][0] == 'y' and char_cube[3][0][2] == 'y':
-                print('found a cross')
-                break
-
-        # fish
-        if char_cube[5][0][1] == 'y' and char_cube[5][1][0] == 'y' and char_cube[5][1][2] == 'y' and char_cube[5][2][0] == 'y' and char_cube[5][2][1] == 'y':
-            print('found a fish')
-            break
-
-        print('didnt find anything, doing up to find next pattern. current s = ',s)
-        up()
-    
-    right()
-    up()
-    right_prime()
-    up()
-    right()
-    up()
-    up()
-    right_prime()
-    return solve_stage
-
-def solve_last_layer(solve_stage):
-    print('stage 7: solve_last_layer')
-
-    same_corners = True
-
-    # rotate to check if corner matches
-    for s in range(0,4):
-        if not(char_cube[s][0][0] == char_cube[s][1][1] and char_cube[s][0][2] == char_cube[s][1][1]):
-            same_corners = False
-            break
-    
-    if same_corners:
-        solve_stage = 8
-        return solve_stage
-
-    for s in range(0,4):
-        # if we find a matching corner
-        if char_cube[s][0][0] == char_cube[s][0][2]:
-            # put same corners at the back
-            for i in range(0,3-s):
-                up_prime()
-            # rotate until corner matches center
-            while not(char_cube[3][0][0] == char_cube[3][1][1]):
-                rotate_cw()
-                up_prime()
-            break
-    
-    right_prime()
-    front()
-    right_prime()
-    back()
-    back()
-    right()
-    front_prime()
-    right_prime()
-    back()
-    back()
-    right()
-    right()
-
-    # rotate so then it's correct
-    for s in range(0,4):
-        # if we find a matching corner
-        if char_cube[s][0][0] == char_cube[s][0][2]:
-            while not(char_cube[s][0][0] == char_cube[s][1][1]):
-                rotate_cw()
-                up_prime()
-            break
-
-
-    return solve_stage
-
-def solve_last_layer_middle(solve_stage):
-    print('stage 8: solve last layer - middle pieces')
-
-    last_layer = True
-
-    for s in range(0,4):
-        for i in range(0,3):
-            if not(char_cube[s][0][i] == char_cube[s][1][1]):
-                last_layer = False
-                break
-    
-    if last_layer:
-        solve_stage = 9
-        return solve_stage
-    
-    for s in range(0,4):
-        if char_cube[s][0][0] == char_cube[s][0][1] and char_cube[s][0][2] == char_cube[s][0][1]:
-            color = char_cube[s][0][1]
-            while not(char_cube[s][1][1] == color):
-                rotate_cw()
-                up_prime()
-            # rotate side to back
-            while not(char_cube[3][1][1] == color):
-                rotate_cw()
-            break
-        up()
-
-    # now the filled side is at the back, OR there are no filled sides, just apply algorithm
-    # checking for clockwise
-    if (char_cube[0][0][1] == char_cube[2][1][1] and char_cube[1][0][1] == char_cube[0][1][1] and char_cube[2][0][1] == char_cube[1][1][1]):
-        right()
-        right()
-        up()
-        right()
-        up()
-        right_prime()
-        up_prime()
-        right_prime()
-        up_prime()
-        right_prime()
-        up()
-        right_prime()
-    else:
-        right()
-        up_prime()
-        right()
-        up()
-        right()
-        up()
-        right()
-        up_prime()
-        right_prime()
-        up_prime()
-        right()
-        right()
-    
-    return solve_stage
-
-
-
-
-
-
-
-
-
-
-
+        elif turn == 'B':
+            back()
+        elif turn == 'B2':
+            back()
+            back()
+        elif turn == 'B\'':
+            back_prime()
 
 def is_cube_solved():
     for s in range(0,6):
@@ -1369,7 +841,6 @@ right_prime_button = button(surface, gray, 800, 450, 30, 30, 'R\'', white, 20)
 back_button = button(surface, gray, 850, 450, 30, 30, 'B', white, 20)
 back_prime_button = button(surface, gray, 900, 450, 30, 30, 'B\'', white, 20)
 
-rotate_cw_button = button(surface, gray, 825, 300, 100, 30, 'Rotate CW', white, 20)
 scramble_button = button(surface, gray, 825, 350, 100, 30, 'Scramble', white, 20)
 test_button = button(surface, gray, 825, 200, 75, 30, 'Test', white, 20)
 
@@ -1401,11 +872,6 @@ while True:
             # checks for buttons
             if mouse.intersects(start_button):
                 solving = True
-            elif mouse.intersects(rotate_cw_button):
-                if not(solving):
-                    rotate_cw()
-                # change solving after testing 
-                button_pressed = True
             elif mouse.intersects(scramble_button):
                 if not(solving):
                     scramble()
