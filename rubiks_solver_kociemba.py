@@ -1,9 +1,9 @@
-#  test
+# 
 # Author: Kenneth Hung
+# This program will solve the cube using the kociemba algorithm using the arduino connected to COM8 port
 # This is the file that runs the solver, and displays the cube graphically using PyGame
-# Currently under testing and refining, but still functional
-#   
-
+# # Run this file with the arduino connected
+#
 
 
 # Import and initialize the pygame library

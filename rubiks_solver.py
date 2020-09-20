@@ -1,9 +1,9 @@
-#  test
+# 
 # Author: Kenneth Hung
+# This program will solve the cube using an optimized F2L algorithm with the arduino connected to COM8 port
 # This is the file that runs the solver, and displays the cube graphically using PyGame
-# Currently under testing and refining, but still functional
-#   
-
+# Run this file with the arduino connected
+#
 
 
 # Import and initialize the pygame library
@@ -20,10 +20,6 @@ import random
 import time
 import serial
 
-# for i in range(5):
-#     servo.rotate_one()
-#     servo.rotate_two()
-#     servo.rotate_three()
 # colors
 white = ((255,255,255))
 blue = ((0,0,255))

@@ -1,29 +1,11 @@
 import serial
 import time
+# connecting arduino port to python program
+###########################
+# change the port here!!
+###########################
 ser = serial.Serial('COM8', 115200, timeout=None)
 time.sleep(2)
-# def rotate_one():
-#   ser.write(b'0')
-#   print("i just wrote 0 into serial")
-#   print("now reading...")
-#   read_data = ser.read()
-#   print(read_data)
-#   print("we got a response back!")
-
-# def rotate_two():
-#   ser.write(b'1')
-#   print("i just wrote 1 into serial")
-#   print("now reading...")
-#   read_data = ser.read()
-#   print(read_data)
-#   print("we got a response back!")
-# def rotate_three():
-#   ser.write(b'2')
-#   print("i just wrote 2 into serial")
-#   print("now reading...")
-#   read_data = ser.read()
-#   print(read_data)
-#   print("we got a response back!")
 
 def rotate_1():
   ser.write(b'0')
