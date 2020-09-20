@@ -1,10 +1,19 @@
 # Rubiks Cube Solver by Kenneth Hung
 
-*currently refining GUI and console text display*
 
 #### This is a Python program which can solve a Rubik's cube using a layer-by-layer approach. The cube is represented as a 2D cube net with the GUI programmed using PyGame, which is updated in real-time as the cube is being solved. The program has buttons for turns, scramble, testing and solve.
 
-To start, download all files and run "rubiks_solver.py". From there, the GUI should appear.
+#### This is used with with an Arduino for a Mechanical Rubik's Cube Solver. See here: https://www.youtube.com/watch?v=gUwmZd0N5iU&t=9s
+
+
+There are 4 solver files. To start, download all files and run the desired solver.
+  rubiks_solver.py : solve the cube using an optimized F2L algorithm with the arduino connected to COM8 port
+  rubiks_solver_only_gui.py : solve the cube using an optimized F2L algorithm ONLY GRAPHICALLY, no arduino!
+  rubiks_solver_kociemba.py : solve the cube using the kociemba algorithm using the arduino connected to COM8 port
+  rubiks_solver_only_gui_kociemba_.py : solve the cube using the kociemba algorithm ONLY GRAPHICALLY, no arduino!
+  
+### Arduino Breakdown
+When developing my personal project, I used this Python solver to send serial input for the cube turns to an Arduino, which was connected to servos that then executed the turn. See the above YouTube Link for the Mechanical Solver.
 
 ### Cube Display
 By default, the cube will look like such, where the letters represent the colors on a cube
@@ -63,8 +72,8 @@ Test Button (FOR DEVELOPMENT)
  Solve Button
   - When there is a scrambled cube, press to solve! Steps and stages will appear in the console terminal
   
- ### How It Works
- When the solve button is pressed, the on screen graphical cube is converted into a char array, where the set algorithm then begins to execute. It uses a basic layer-by-layer approach which is what I personally use to solve the cube. Once a stage is complete, it will move on to the next. At the final stage, the cube is solved. Below is a brief summary of the solving stages.
+ ### How It Works - Optimized F2L Method
+ When the solve button is pressed, the on screen graphical cube is converted into a char array, where the set algorithm then begins to execute. It uses a custom optimized F2L  approach which is what I personally use to solve the cube. Once a stage is complete, it will move on to the next. At the final stage, the cube is solved. Below is a brief summary of the solving stages.
  
  1. Solve white cross without aligned bottom layer
  2. Solve white cross with aligned bottom layer
@@ -74,6 +83,10 @@ Test Button (FOR DEVELOPMENT)
  6. Solve yellow side without aligned top layer
  7. Permute last layer part 1
  8. Permute last layer part 2
+ 
+ ### Kociemba Method
+ The Kociemba method is a Python library which can solve a Rubik's Cube in a short amount of steps. In my kociemba solver files, I used this algorithm instead of my personal algorithm from above. The library can be found here: https://pypi.org/project/kociemba/ All credits go to the authors of the library.
+ 
  
  ### Notes
   - If the program terminates while solving and you inputted colors for the solve, the colors on the cube aren't inputted correctly. Misaligned sides, even if there is enough colors on the cube, are unsolvable. Try to input the colors again.
